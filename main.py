@@ -50,7 +50,7 @@ if __name__ == '__main__':
     parser.add_argument('--inference_n_batches', type=int, default=-1)
     parser.add_argument('--save_flow', action='store_true', help='save predicted flows to file')
 
-    parser.add_argument('--resume', default='', type=str, metavar='PATH', help='path to latest checkpoint (default: none)')
+    parser.add_argument('--resume', default='./work/FlowNet2_train-checkpoint.pth.tar', type=str, metavar='PATH', help='path to latest checkpoint (default: none)')
     parser.add_argument('--log_frequency', '--summ_iter', type=int, default=1, help="Log every n batches")
 
     parser.add_argument('--skip_training', action='store_true')
@@ -267,8 +267,10 @@ if __name__ == '__main__':
             losses = model(data[0], target[0])
             losses = [torch.mean(loss_value) for loss_value in losses] 
             loss_val = losses[0] # Collect first loss for weight update
-            total_loss += loss_val.data[0]
-            loss_values = [v.data[0] for v in losses]
+            # total_loss += loss_val.data[0]
+            # loss_values = [v.data[0] for v in losses]
+            total_loss += loss_val.item()
+            loss_values = [v.item() for v in losses]
 
             # gather loss_labels, direct return leads to recursion limit error as it looks for variables to gather'
             loss_labels = list(model.module.loss.loss_labels)
